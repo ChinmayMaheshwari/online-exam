@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'exam',
     'rest_framework',
     'import_export',
+    'django_cleanup',
 ]
 
 MIDDLEWARE = [
