@@ -103,7 +103,7 @@ def send_email(sender,**kwargs):
 		instance = kwargs.get('instance')
 		send_mail(
 				'Online-Exam by Chinmay',
-				'There is your exam on '+str(instance.exam.start_time)+' Your link to start test is https://34.86.187.215/exam/info/'+str(instance.external_identifier),
+				'There is your exam on '+str(instance.exam.start_time[:-5])+' Your link to start test is https://34.86.187.215/exam/info/'+str(instance.external_identifier),
 				'chinmay1305@gmail.com',
 				[instance.student.email]
 			)
