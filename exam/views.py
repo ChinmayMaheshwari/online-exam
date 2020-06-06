@@ -120,21 +120,23 @@ class StudentResponse(APIView):
 					question = question,
 					student_exam = student_exam
 				)
-			if created and question.answer==request.data.get('response'):
+			ans = " ".join(question.answer.split())
+			response = " ".join(request.data.get('response').split())
+			if created and ans==response:
 				student_exam.marks+=question.marks
 			elif created:
 				student_exam.marks+=question.negative_marks
 			else:
-				if question.answer==student_response.response:
+				if ans==student_response.response:
 					student_exam.marks-=question.marks
 				else:
 					student_exam.marks-=question.negative_marks
-				if question.answer==request.data.get('response'):
+				if ans==response:
 					student_exam.marks+=question.marks
 				else:
 					student_exam.marks+=question.negative_marks
 			student_exam.save()
-			student_response.response = request.data.get('response')
+			student_response.response = response
 			student_response.time_stamp = timezone.now()
 			student_response.save()
 			return Response({'status':'ok'})
