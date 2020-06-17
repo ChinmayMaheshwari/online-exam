@@ -67,3 +67,5 @@ class QuestionAdmin(admin.ModelAdmin):
 	list_filter = ('exam__subject_name',)
 
 admin.site.register(Question,QuestionAdmin)
+admin.site.site_header = "ITE Exam Panel"
+admin.site.site_title = "ITE Exam "
