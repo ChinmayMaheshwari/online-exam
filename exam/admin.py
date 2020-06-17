@@ -18,6 +18,13 @@ class StudentResource(resources.ModelResource):
 		model = Student
 		import_id_fields = ('email',)
 
+class QuestionResource(resources.ModelResource):
+	class Meta:
+		model = Question
+		fields = ('exam','question_text','marks','negative_marks','choices','answer','section')
+		import_id_fields = ('exam','question_text',)
+		#exclude = ('id','ex_img','section','question_type')
+
 class StudentExamResource(resources.ModelResource):
 	class Meta:
 		model = Student_Exam
@@ -62,7 +69,8 @@ class QuestionForm(ModelForm):
     				'answer Field is required in MCQ'])
 			
 		return self.cleaned_data
-class QuestionAdmin(admin.ModelAdmin):
+class QuestionAdmin(ImportExportModelAdmin):
+	resource_class = QuestionResource
 	form = QuestionForm
 	list_filter = ('exam__subject_name',)
 

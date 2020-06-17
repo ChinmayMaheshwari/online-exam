@@ -10,6 +10,12 @@ import base64
 from django.core.files.base import ContentFile
 import datetime 
 
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.core.cache import cache
+
+CACHE_TTL = getattr(settings,  'CACHE_TTL', DEFAULT_TIMEOUT)
+
 def base64_file(data, name=None):
     _format, _img_str = data.split(';base64,')
     _name, ext = _format.split('/')
@@ -22,7 +28,12 @@ def onlineexam(request,uid):
 		if uid:
 			student_object = Student_Exam.objects.get(external_identifier = uid)
 			exam = student_object.exam
-			questions = Question.objects.filter(exam=exam)
+			if exam.subject_name in cache:
+				questions = cache.get(exam.subject_name)
+			else:
+				questions = Question.objects.filter(exam=exam)
+				cache.set(exam.subject_name, questions, timeout=CACHE_TTL)
+
 		else:
 			return HttpResponse("Invalid Request")
 		start_time = student_object.exam.start_time
@@ -62,7 +73,12 @@ def iframeview(request,uid):
 	exam = student_object.exam
 	start_time = exam.start_time
 	if student_object.is_completed==False and start_time+datetime.timedelta(minutes=int(str(exam.total_duration/1000/1000)[-3:]))>=timezone.localtime(timezone.now()) and start_time<=timezone.localtime(timezone.now()):
-		questions = Question.objects.filter(exam=exam,section=Section.objects.get(id=section))
+		section = Section.objects.get(id=section)
+		if exam.subject_name+'_'+section.section_name in cache:
+			questions = cache.get(exam.subject_name+'_'+section.section_name)
+		else:
+			questions = Question.objects.filter(exam=exam,section=section)
+			cache.set(exam.subject_name+'_'+section.section_name,questions,timeout=CACHE_TTL)
 		return render(request,'iframesquestionpaper.html',{'questions':questions})
 
 def iframeview1(request,uid):
@@ -75,7 +91,12 @@ def iframeview1(request,uid):
 	exam = student_object.exam
 	start_time = exam.start_time
 	if student_object.is_completed==False and start_time+datetime.timedelta(minutes=int(str(exam.total_duration/1000/1000)[-3:]))>=timezone.localtime(timezone.now()) and start_time<=timezone.localtime(timezone.now()):
-		questions = Question.objects.filter(exam=exam,section=Section.objects.get(id=section))
+		section = Section.objects.get(id=section)
+		if exam.subject_name+'_'+section.section_name in cache:
+			questions = cache.get(exam.subject_name+'_'+section.section_name)
+		else:
+			questions = Question.objects.filter(exam=exam,section=section)
+			cache.set(exam.subject_name+'_'+section.section_name,questions,timeout=CACHE_TTL)
 		return render(request,'questionpaper.html',{'questions':questions})
 
 def infoView(request,uid):
@@ -86,7 +107,6 @@ def infoView(request,uid):
 		sections = Section.objects.filter(exam=exam)
 		return render(request,'iframesInstruction.html',{'student_object':student_object,'exam':exam,'sections':sections,'duration':duration})
 
-
 def examView(request,uid):
 	if request.method=='GET':
 		student_object = Student_Exam.objects.get(external_identifier = uid)
@@ -96,7 +116,7 @@ def examView(request,uid):
 			subject_name = student_object.exam.subject_name
 			return render(request,'index.html',{'student':student,'subject_name':subject_name,'uid':uid})
 		else:
-			return HttpResponse("Start time is "+str(start_time)+"Or paper was Over")
+			return HttpResponse("Start time is "+str(start_time)+" Or paper was Over")
 	return HttpResponse("Only Get Allowded")
 """
 class StudentQuizView(APIView):
