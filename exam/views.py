@@ -43,7 +43,7 @@ def onlineexam(request,uid):
 			student_object.start_time = timezone.localtime(timezone.now())
 			student_object.is_started=True
 			student_object.save()
-			the_time = datetime.datetime.strptime(str(student_object.start_time), '%Y-%m-%d %H:%M:%S.%f%z')
+			the_time = datetime.datetime.strptime(str(student_object.start_time)[:-6], '%Y-%m-%d %H:%M:%S.%f')
 			new_time = the_time + datetime.timedelta(minutes=int(str(student_object.exam.total_duration/1000/1000)[-3:]))
 			new_time = new_time.strftime('%b %d, %Y %H:%M:%S')
 			return render(request,'quiz.html',{'uid':uid,'sections':sections,'questions':questions,'exam':exam,'end_time':new_time})

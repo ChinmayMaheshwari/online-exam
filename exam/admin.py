@@ -30,6 +30,7 @@ class StudentExamResource(resources.ModelResource):
 		model = Student_Exam
 		fields = ('student','exam')
 		import_id_fields = ('student',)
+		
 admin.site.register(ProcteredSS,ProcteredAdmin)
 admin.site.register(Exam)
 
@@ -42,8 +43,18 @@ class StudentAdmin(ImportExportModelAdmin):
 	resource_class = StudentResource
 admin.site.register(Student,StudentAdmin)
 
+class ExportStudentExamResource(resources.ModelResource):
+
+	class Meta:
+		model = Student_Exam
+		fields = ('student','external_identifier',)
+
 class StudentExamAdmin(ImportExportModelAdmin):
 	resource_class = StudentExamResource
+
+	def get_export_resource_class(self):
+		return ExportStudentExamResource
+
 admin.site.register(Student_Exam,StudentExamAdmin)
 
 class SectionAdmin(admin.ModelAdmin):

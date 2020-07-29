@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 import datetime
+from django.utils.timezone import localtime
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 # Create your models here.
@@ -101,9 +102,10 @@ class Student_Response(models.Model):
 def send_email(sender,**kwargs):
 	if kwargs.get('created'):
 		instance = kwargs.get('instance')
+		uid = str(instance.external_identifier)
 		send_mail(
-				'Online-Exam by Chinmay',
-				'There is your exam on '+str(instance.exam.start_time)[:-5]+' Your link to start test is https://34.86.187.215/exam/info/'+str(instance.external_identifier),
+				'Online-Exam by ITE Bhopal',
+				'There is your exam on '+str(localtime(instance.exam.start_time))[:-6]+' Your link to start test is https://exam.iteindia.in/exam/info/'+uid,
 				'chinmay1305@gmail.com',
 				[instance.student.email]
 			)
