@@ -51,7 +51,7 @@ class ExportStudentExamResource(resources.ModelResource):
 
 class StudentExamAdmin(ImportExportModelAdmin):
 	resource_class = StudentExamResource
-
+	readonly_fields = ('warning_count','start_time','end_time','marks','external_identifier','is_started','is_completed',)
 	def get_export_resource_class(self):
 		return ExportStudentExamResource
 
