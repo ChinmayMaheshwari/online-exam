@@ -7,7 +7,7 @@ django-cleanup==5.0.0
 django-debug-toolbar==2.2
 django-import-export==2.3.0
 django-redis==4.12.1
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 et-xmlfile==1.0.1
 jdcal==1.4.1
 MarkupPy==1.14
